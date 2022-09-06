@@ -1,5 +1,1 @@
-Program must show polls/surveys on display.
-This program show the polls/surveys question each have date and time to finish.
-The polls result must not be hidden.
-Any visitor can look and do the polls/survey.
-Visitor can see total vote on start date and after on
+Django
