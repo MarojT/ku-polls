@@ -7,7 +7,7 @@ from django.utils import timezone
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
-    end_date = models.DateTimeField('ending date')
+    end_date = models.DateTimeField('ending date', null=True, blank=True, default=None)
 
     def was_published_recently(self):
         now = timezone.now()
@@ -22,7 +22,7 @@ class Question(models.Model):
 
     def can_vote(self):
         now = timezone.now()
-        if self.end_date <= now <= self.pub_date:
+        if self.end_date >= now >= self.pub_date:
             return True
         else:
             return False
