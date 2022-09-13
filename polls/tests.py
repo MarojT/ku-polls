@@ -75,8 +75,21 @@ class QuestionModelTests(TestCase):
         """Test user can't vote end question."""
         time = timezone.now() + datetime.timedelta(hours=24)
         end_time = timezone.now() - datetime.timedelta(hours=24)
-        recent_question = Question(pub_date=time, end_date=end_time)
-        self.assertFalse(recent_question.can_vote())
+        question = Question(pub_date=time, end_date=end_time)
+        self.assertFalse(question.can_vote())
+
+    def test_can_vote_question(self):
+        """Test user can vote question."""
+        time = timezone.now() - datetime.timedelta(hours=24)
+        end_time = timezone.now() + datetime.timedelta(hours=24)
+        question = Question(pub_date=time, end_date=end_time)
+        self.assertTrue(question.can_vote())
+
+    def test_question_with_no_end_time(self):
+        """Test user can vote question with no end time."""
+        time = timezone.now() - datetime.timedelta(hours=24)
+        question = Question(pub_date=time)
+        self.assertTrue(question.can_vote())
 
 
 class QuestionIndexViewTests(TestCase):
@@ -146,7 +159,7 @@ class QuestionDetailViewTests(TestCase):
         future_question = create_question(question_text='Future question.', days=5)
         url = reverse('polls:detail', args=(future_question.id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
 
     def test_past_question(self):
         """
