@@ -66,6 +66,12 @@ class QuestionModelTests(TestCase):
         self.assertTrue(recent_question.can_vote())
 
     def test_can_vote_not_published_question(self):
+        """Test user can't vote question that not published."""
+        time = timezone.now() + datetime.timedelta(hours=24)
+        recent_question = Question(pub_date=time)
+        self.assertFalse(recent_question.can_vote())
+
+    def test_can_not_vote_end_question(self):
         """Test user can't vote end question."""
         time = timezone.now() + datetime.timedelta(hours=24)
         end_time = timezone.now() - datetime.timedelta(hours=24)
