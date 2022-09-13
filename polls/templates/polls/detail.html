@@ -8,5 +8,5 @@
         <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
     {% endfor %}
 </fieldset>
-<input type="submit" value="Vote">
+<input type="submit" value="Vote"> <a href="{%url 'polls:results' question.id %}"><button type="button" >Result </button> </a> <a href="{%url 'polls:index' %}"><button type="button" >Home </button> </a>
 </form>

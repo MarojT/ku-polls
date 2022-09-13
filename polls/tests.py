@@ -46,6 +46,51 @@ class QuestionModelTests(TestCase):
         recent_question = Question(pub_date=time)
         self.assertIs(recent_question.was_published_recently(), True)
 
+    def test_is_published(self):
+        """Test that question is published"""
+        time = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
+        recent_question = Question(pub_date=time)
+        self.assertTrue(recent_question.is_published())
+
+    def test_is_not_published(self):
+        """Test that question is not published."""
+        time = timezone.now() + datetime.timedelta(hours=23, minutes=59, seconds=59)
+        recent_question = Question(pub_date=time)
+        self.assertFalse(recent_question.is_published())
+
+    def test_can_vote_published_question(self):
+        """Test user can vote published question."""
+        time = timezone.now() - datetime.timedelta(hours=24)
+        end_time = timezone.now() + datetime.timedelta(hours=24)
+        recent_question = Question(pub_date=time, end_date=end_time)
+        self.assertTrue(recent_question.can_vote())
+
+    def test_can_vote_not_published_question(self):
+        """Test user can't vote question that not published."""
+        time = timezone.now() + datetime.timedelta(hours=24)
+        recent_question = Question(pub_date=time)
+        self.assertFalse(recent_question.can_vote())
+
+    def test_can_not_vote_end_question(self):
+        """Test user can't vote end question."""
+        time = timezone.now() + datetime.timedelta(hours=24)
+        end_time = timezone.now() - datetime.timedelta(hours=24)
+        question = Question(pub_date=time, end_date=end_time)
+        self.assertFalse(question.can_vote())
+
+    def test_can_vote_question(self):
+        """Test user can vote question."""
+        time = timezone.now() - datetime.timedelta(hours=24)
+        end_time = timezone.now() + datetime.timedelta(hours=24)
+        question = Question(pub_date=time, end_date=end_time)
+        self.assertTrue(question.can_vote())
+
+    def test_question_with_no_end_time(self):
+        """Test user can vote question with no end time."""
+        time = timezone.now() - datetime.timedelta(hours=24)
+        question = Question(pub_date=time)
+        self.assertTrue(question.can_vote())
+
 
 class QuestionIndexViewTests(TestCase):
     def test_no_questions(self):
@@ -114,7 +159,7 @@ class QuestionDetailViewTests(TestCase):
         future_question = create_question(question_text='Future question.', days=5)
         url = reverse('polls:detail', args=(future_question.id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
 
     def test_past_question(self):
         """
@@ -126,12 +171,12 @@ class QuestionDetailViewTests(TestCase):
         response = self.client.get(url)
         self.assertContains(response, past_question.question_text)
 
-class QuestionResultVoteTests(TestCase):
-    def test_vote_counted(self):
-        question = create_question(question_text='Question.', days=0)
-        question.choice_set.create(choice_text='Choice1', votes=1)
-        choice = question.choice_set.get(pk=1)
-        url = reverse('polls:results', args=(question.id,))
-        response = self.client.get(url)
-        self.assertContains(response, f"{choice.choice_text} -- {choice.votes} vote")
 
+class QuestionResultViewTests(TestCase):
+    def test_vote_count(self):
+        test_question = create_question(question_text="test_vote", days=1)
+        test_question.choice_set.create(choice_text='test', votes=5)
+        choice_vote_result = test_question.choice_set.get(pk=1)
+        url = reverse('polls:results', args=(test_question.id,))
+        response = self.client.get(url)
+        self.assertEqual(choice_vote_result.votes, 5)
