@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class Question(models.Model):
@@ -42,3 +43,8 @@ class Choice(models.Model):
     def __str__(self):
         """Return choice text."""
         return self.choice_text
+
+
+class Voting(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user_id = models.IntegerField(default=0)
