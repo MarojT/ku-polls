@@ -1,9 +1,11 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Choice, Question
 
@@ -22,7 +24,7 @@ class IndexView(generic.ListView):
         ).order_by('-pub_date')[:5]
 
 
-class DetailView(generic.DetailView):
+class DetailView(LoginRequiredMixin,generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
 
@@ -51,9 +53,12 @@ class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
 
-
+@login_required
 def vote(request, question_id):
     """Add vote to choice of the current question."""
+    user = request.user
+    if not user.is_authenticated:
+        return redirect('login')
     question = get_object_or_404(Question, pk=question_id)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
