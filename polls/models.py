@@ -55,3 +55,4 @@ class Vote(models.Model):
     @property
     def question(self):
         return self.choice.question
+
