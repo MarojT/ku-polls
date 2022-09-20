@@ -3,7 +3,7 @@ import datetime
 from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
-
+from django.contrib.auth.models import User
 from .models import Question
 
 
@@ -166,17 +166,28 @@ class QuestionDetailViewTests(TestCase):
         The detail view of a question with a pub_date in the past
         displays the question's text.
         """
+        user = User.objects.create_user("user", "user@gmail.com", "12345")
+        user.save()
+        self.client.login(username="user", password="12345")
         past_question = create_question(question_text='Past Question.', days=-5)
         url = reverse('polls:detail', args=(past_question.id,))
         response = self.client.get(url)
         self.assertContains(response, past_question.question_text)
 
+class VoteModelTest(TestCase):
+    def setup(self):
+        user = User.objects.create_user("user", "user@gmail.com", "12345")
+        user.save()
 
-class QuestionResultViewTests(TestCase):
-    def test_vote_count(self):
-        test_question = create_question(question_text="test_vote", days=1)
-        test_question.choice_set.create(choice_text='test', votes=5)
-        choice_vote_result = test_question.choice_set.get(pk=1)
-        url = reverse('polls:results', args=(test_question.id,))
+    def test_login_vote(self):
+        self.client.login(username="user", password="12345")
+        past_question = create_question(question_text='Past Question.', days=-1)
+        url = reverse('polls:detail', args=(past_question.id,))
         response = self.client.get(url)
-        self.assertEqual(choice_vote_result.votes, 5)
+        self.assertContains(response, past_question.question_text)
+
+    def test_not_login_vote(self):
+        past_question = create_question(question_text='Past Question.', days=-1)
+        url_question = reverse('polls:detail', args=(past_question.id,))
+        response = self.client.get(url_question)
+        self.assertEqual(response.status_code, 302)
