@@ -21,3 +21,10 @@
 {% else %}
     <p>No polls are available.</p>
 {% endif %}
+
+{% if user.is_authenticated %}
+   Welcome back, {{ user.username }} <br>
+<a href="{% url 'logout' %}"><button type="button" >Logout</button></a>
+{% else %}
+   Please <a href="{% url 'login' %}"><button type="button" >Login</button></a>
+{% endif %}
