@@ -8,6 +8,14 @@ This application is part of the [Individual Software Process](https://cpske.gith
 ## How to Install and Run
 To be added.
 
+## User that exists in the KU-polls
+| Username | Password |
+|----------|----------|
+| username | 12345    |
+| Jake     | jake123  |
+
+
+
 ## Project Documents
 All project documents are in the [Project Wiki](https://github.com/MarojT/ku-polls/wiki)
 * [Vision Statement](https://github.com/MarojT/ku-polls/wiki/Vision-Statement)
