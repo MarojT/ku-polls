@@ -47,7 +47,12 @@ class DetailView(LoginRequiredMixin, generic.DetailView):
             messages.error(request, "This poll has ended.")
             return HttpResponseRedirect(reverse('polls:index'))
         else:
-            return render(request, 'polls/detail.html', {'question': question})
+            voted_choice = Vote.objects.filter(user=user)
+            check = ""
+            for select_choice in voted_choice:
+                if select_choice.question == question:
+                    check = select_choice.choice.choice_text
+            return render(request, 'polls/detail.html', {'question': question, 'check': check, })
 
 
 class ResultsView(generic.DetailView):
