@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import Choice, Question
+from .models import Choice, Question, Vote
 
 
 class IndexView(generic.ListView):
@@ -24,7 +24,7 @@ class IndexView(generic.ListView):
         ).order_by('-pub_date')[:5]
 
 
-class DetailView(LoginRequiredMixin,generic.DetailView):
+class DetailView(LoginRequiredMixin, generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
 
@@ -39,6 +39,7 @@ class DetailView(LoginRequiredMixin,generic.DetailView):
         Redirect web to different page by is_published and can_vote.
         """
         question = get_object_or_404(Question, pk=pk)
+        user = request.user
         if not question.is_published():
             messages.error(request, "This poll didn't publish yet.")
             return HttpResponseRedirect(reverse('polls:index'))
@@ -54,7 +55,6 @@ class ResultsView(generic.DetailView):
     template_name = 'polls/results.html'
 
 
-@login_required
 def vote(request, question_id):
     """Add vote to choice of the current question."""
     user = request.user
@@ -70,9 +70,12 @@ def vote(request, question_id):
             'error_message': "You didn't select a choice.",
         })
     else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
+        voted_choice = Vote.objects.filter(user=user)
+        for select in voted_choice:
+            if select.question == question:
+                select.choice = selected_choice
+                select.save()
+                return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+        new_vote = Vote.objects.create(user=user, choice=selected_choice)
+        new_vote.save()
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
