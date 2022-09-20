@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 
 class Question(models.Model):
+    """Question model for creating questions."""
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
     end_date = models.DateTimeField('ending date', null=True, blank=True, default=None)
@@ -36,6 +37,7 @@ class Question(models.Model):
 
 
 class Choice(models.Model):
+    """Choice model for creating choices."""
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
 
@@ -49,6 +51,7 @@ class Choice(models.Model):
 
 
 class Vote(models.Model):
+    """Vote model for check authenticated user vote"""
     choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 
