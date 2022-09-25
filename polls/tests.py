@@ -174,6 +174,7 @@ class QuestionDetailViewTests(TestCase):
         response = self.client.get(url)
         self.assertContains(response, past_question.question_text)
 
+
 class VoteModelTest(TestCase):
     def setup(self):
         user = User.objects.create_user("user", "user@gmail.com", "12345")
