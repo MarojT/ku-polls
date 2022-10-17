@@ -1,4 +1,5 @@
 [![codecov](https://codecov.io/gh/MarojT/ku-polls/branch/main/graph/badge.svg?token=W677WD0KXE)](https://codecov.io/gh/MarojT/ku-polls)
+![unittest](https://github.com/MarojT/demo-pyci/actions/workflows/python-app.yml/badge.svg) <br>
 # ku-pools
 
 ## Online Polls for Kasetsart University
