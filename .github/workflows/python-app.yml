@@ -38,3 +38,5 @@ jobs:
     - name: Test with unittest
       run: |
         coverage run manage.py test polls
+    - name: Report to codecov
+      uses: codecov/codecov-action@v3
