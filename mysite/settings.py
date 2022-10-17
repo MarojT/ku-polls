@@ -8,8 +8,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-from typing import List
-from decouple import config, Csv
+from decouple import config
 import os.path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
