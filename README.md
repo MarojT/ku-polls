@@ -1,3 +1,4 @@
+[![codecov](https://codecov.io/gh/MarojT/ku-polls/branch/main/graph/badge.svg?token=W677WD0KXE)](https://codecov.io/gh/MarojT/ku-polls)
 # ku-pools
 
 ## Online Polls for Kasetsart University
