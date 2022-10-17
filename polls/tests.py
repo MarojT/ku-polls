@@ -182,10 +182,11 @@ class VoteModelTest(TestCase):
 
     def test_login_vote(self):
         self.client.login(username="user", password="12345")
-        past_question = create_question(question_text='Past Question.', days=-1)
+        past_question = create_question(question_text='Past Question.',
+                                        days=-1)
         url = reverse('polls:detail', args=(past_question.id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
     def test_not_login_vote(self):
         past_question = create_question(question_text='Past Question.', days=-1)
